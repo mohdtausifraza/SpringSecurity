@@ -12,3 +12,11 @@
     username VARCHAR(45) NOT NULL,
     authority VARCHAR(45) NOT NULL
   );
+
+    DROP TABLE IF EXISTS Customers;
+    CREATE TABLE Customers (
+      id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+      email VARCHAR(45) NOT NULL,
+      pwd VARCHAR(200) NOT NULL,
+      role VARCHAR(45) NOT NULL
+    );
