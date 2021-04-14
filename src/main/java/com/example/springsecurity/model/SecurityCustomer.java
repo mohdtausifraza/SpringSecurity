@@ -10,9 +10,9 @@ import java.util.List;
 
 public class SecurityCustomer implements UserDetails {
 
-    private final Customers customer;
+    private final Customer customer;
 
-    public SecurityCustomer(Customers customer) {
+    public SecurityCustomer(Customer customer) {
         this.customer = customer;
     }
 

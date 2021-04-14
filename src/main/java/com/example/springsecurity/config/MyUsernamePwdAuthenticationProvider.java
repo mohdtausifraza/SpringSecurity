@@ -1,7 +1,7 @@
 package com.example.springsecurity.config;
 
 
-import com.example.springsecurity.model.Customers;
+import com.example.springsecurity.model.Customer;
 import com.example.springsecurity.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -31,7 +31,7 @@ public class MyUsernamePwdAuthenticationProvider implements AuthenticationProvid
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String pwd = authentication.getCredentials().toString();
-        List<Customers> customers = customerRepository.findByEmail(username);
+        List<Customer> customers = customerRepository.findByEmail(username);
         if (customers.size() > 0){
             if (passwordEncoder.matches(pwd , customers.get(0).getPwd())){
                 List<GrantedAuthority> authorities = new ArrayList<>();

@@ -1,6 +1,6 @@
 package com.example.springsecurity.config;
 
-import com.example.springsecurity.model.Customers;
+import com.example.springsecurity.model.Customer;
 import com.example.springsecurity.model.SecurityCustomer;
 import com.example.springsecurity.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,10 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<Customers> customers = customerRepository.findByEmail(username);
-        if (customers.size() == 0){
+        List<Customer> customer = customerRepository.findByEmail(username);
+        if (customer.size() == 0){
             throw new UsernameNotFoundException("User Details Not found for the user : "+ username);
         }
-        return new SecurityCustomer(customers.get(0));
+        return new SecurityCustomer(customer.get(0));
     }
 }

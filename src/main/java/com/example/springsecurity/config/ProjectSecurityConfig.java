@@ -6,22 +6,48 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 
 @Configuration
 public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+
+		http.cors().configurationSource(new CorsConfigurationSource() {
+			@Override
+			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+				CorsConfiguration config = new CorsConfiguration();
+				// To Allow the Url and ports
+				config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+				// To allow HTTP methods Like Get, Post etc * means allow all
+				config.setAllowedMethods(Collections.singletonList("*"));
+				// Whether user credentials are supported
+				config.setAllowCredentials(true);
+				//Set the list of headers that a pre-flight request can list as allowed for use during an actual request.
+				config.setAllowedHeaders(Collections.singletonList("*"));
+				//Configure how long, in seconds, the response from a pre-flight request can be cached by clients.
+				config.setMaxAge(3600L);
+				return config;
+			}
+		}).and().csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+				.and()
+				.authorizeRequests()
 				.antMatchers("/myAccount").authenticated()  // Need to be authenticated
 				.antMatchers("/myBalance").authenticated()
 				.antMatchers("/myCards").authenticated()
 				.antMatchers("/myLoans").authenticated()
+				.antMatchers("/user").authenticated()
 				.antMatchers("/contact").permitAll()    // No Authentication required
 				.antMatchers("/notices").permitAll()
 				// For allowing Allowing h2-console
 				.antMatchers("/h2-console/*").permitAll();
 		// Disable CSRF (Cross Site Request Forgery) protection for h2
-		http.csrf().disable();
+//		http.csrf().disable();
 		// Since the H2 database console runs inside a frame,
 		// you need to enable this in Spring Security.
 		http.headers().frameOptions().disable();
