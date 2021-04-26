@@ -35,11 +35,18 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
 				return config;
 			}
 		}).and().csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+				.and().csrf().ignoringAntMatchers("/h2-console/*").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 				.and()
 				.authorizeRequests()
-				.antMatchers("/myAccount").authenticated()  // Need to be authenticated
-				.antMatchers("/myBalance").authenticated()
-				.antMatchers("/myCards").authenticated()
+//				.antMatchers("/myAccount").authenticated()  // Need to be authenticated
+//				.antMatchers("/myBalance").authenticated()
+//				.antMatchers("/myCards").authenticated()
+//				.antMatchers("/myAccount").hasAuthority("WRITE") // Need to be authenticated
+//				.antMatchers("/myBalance").hasAuthority("READ")
+//				.antMatchers("/myCards").hasAuthority("DELETE")
+				.antMatchers("/myAccount").hasRole("USER")
+				.antMatchers("/myBalance").hasAnyRole("USER","ADMIN")
+				.antMatchers("/myCards").hasRole("ROOT")
 				.antMatchers("/myLoans").authenticated()
 				.antMatchers("/user").authenticated()
 				.antMatchers("/contact").permitAll()    // No Authentication required

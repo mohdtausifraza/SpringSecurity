@@ -1,10 +1,16 @@
 INSERT INTO USERS (username,password,enabled) VALUES ('happy','12345',1);
-INSERT INTO AUTHORITIES (username,authority) VALUES ('happy', 'write');
+--INSERT INTO AUTHORITIES (username,authority) VALUES ('happy', 'write');
 --INSERT INTO CUSTOMERS (email,pwd,role) VALUES ('test@example.com', '54321','admin');
 --INSERT INTO CUSTOMERS (email,pwd,role) VALUES ('happy@example.com', '$2y$12$QmAW40KKjUEXCzn3fZQzM.J2GeqfanKAWJaJL0JgH2hAp4DaUzUum','admin');
 
 INSERT INTO `customer` (`name`,`email`,`mobile_number`, `pwd`, `role`,`create_dt`)
  VALUES ('Happy','happy@example.com','9876548337', '$2y$12$QmAW40KKjUEXCzn3fZQzM.J2GeqfanKAWJaJL0JgH2hAp4DaUzUum', 'admin',CURDATE());
+
+INSERT INTO authorities (customer_id, name) VALUES (1, 'READ');
+INSERT INTO authorities(customer_id, name) VALUES (1, 'WRITE');
+
+UPDATE authorities SET name='ROLE_USER' WHERE id=1;
+UPDATE authorities SET name='ROLE_ADMIN' WHERE id=2;
 
 INSERT INTO `accounts` (`customer_id`, `account_number`, `account_type`, `branch_address`, `create_dt`)
  VALUES (1, 186576453434, 'Savings', '123 Main Street, New York', CURDATE());
@@ -60,5 +66,8 @@ VALUES ('Launch of Millennia Cards', 'Millennia Credit Cards are launched for th
 INSERT INTO `notice_details` ( `notice_summary`, `notice_details`, `notic_beg_dt`, `notic_end_dt`, `create_dt`, `update_dt`)
 VALUES ('COVID-19 Insurance', 'EazyBank launched an insurance policy which will cover COVID-19 expenses. Please reach out to the branch for more details',
 '2021-03-12', '2021-12-30', CURDATE(), null);
+
+
+
 
 

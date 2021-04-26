@@ -7,14 +7,6 @@ CREATE TABLE USERS (
     enabled INT NOT  NULL
 );
 
--------------AUTHORITIES TABLE------------------------
-  DROP TABLE IF EXISTS AUTHORITIES;
-  CREATE TABLE AUTHORITIES (
-    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    username VARCHAR(45) NOT NULL,
-    authority VARCHAR(45) NOT NULL
-  );
-
 --    DROP TABLE IF EXISTS Customers;
 --    CREATE TABLE Customers (
 --      id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -35,6 +27,14 @@ CREATE TABLE customer (
   PRIMARY KEY (customer_id)
 );
 
+-------------AUTHORITIES TABLE------------------------
+  CREATE TABLE AUTHORITIES (
+    id int NOT NULL AUTO_INCREMENT,
+    customer_id int NOT NULL,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (customer_id) REFERENCES customer (customer_id)
+  );
 
 ---------------ACCOUNTS TABLE-----------
 CREATE TABLE accounts (
@@ -44,7 +44,7 @@ CREATE TABLE accounts (
       branch_address varchar(200) NOT NULL,
       create_dt date DEFAULT NULL,
       PRIMARY KEY (account_number),
-      CONSTRAINT customer_ibfk_1 FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE CASCADE
+      FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE CASCADE
 );
 
 
