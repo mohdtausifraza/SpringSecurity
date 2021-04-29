@@ -1,20 +1,19 @@
 package com.example.springsecurity.config;
 
-import com.example.springsecurity.filters.AuthoritiesLoggingAfterFilter;
-import com.example.springsecurity.filters.AuthoritiesLoggingAtFilter;
-import com.example.springsecurity.filters.RequestValidationBeforeFilter;
+import com.example.springsecurity.filters.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -22,7 +21,9 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.cors().configurationSource(new CorsConfigurationSource() {
+		// For disabling the default session creation
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and().cors().configurationSource(new CorsConfigurationSource() {
 			@Override
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration config = new CorsConfiguration();
@@ -34,15 +35,23 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
 				config.setAllowCredentials(true);
 				//Set the list of headers that a pre-flight request can list as allowed for use during an actual request.
 				config.setAllowedHeaders(Collections.singletonList("*"));
+				// It indicates that, i want to expose the headers from backend to outside frontend or any other application
+				// which is consuming my services with the name Authorization inside it.
+				config.setExposedHeaders(Arrays.asList("Authorization"));
 				//Configure how long, in seconds, the response from a pre-flight request can be cached by clients.
 				config.setMaxAge(3600L);
 				return config;
 			}
-		}).and().csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-				.and().csrf().ignoringAntMatchers("/h2-console/*").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-				.and().addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+		}).and()
+				// Disable CSRF because we will be validation each request using JWT token
+				.csrf().disable()
+//				.csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//				.and().csrf().ignoringAntMatchers("/h2-console/*").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+				.addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
 				.addFilterAfter(new AuthoritiesLoggingAfterFilter() , BasicAuthenticationFilter.class)
 				.addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
+				.addFilterBefore(new JWTTokenValidatorFilter() ,BasicAuthenticationFilter.class)
+				.addFilterAfter(new JWTTokenGeneratorFilter() ,BasicAuthenticationFilter.class)
 				.authorizeRequests()
 //				.antMatchers("/myAccount").authenticated()  // Need to be authenticated
 //				.antMatchers("/myBalance").authenticated()
