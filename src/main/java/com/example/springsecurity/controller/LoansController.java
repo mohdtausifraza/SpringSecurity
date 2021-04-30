@@ -17,6 +17,7 @@ public class LoansController {
     private LoansRepository loansRepository;
 
     @PostMapping("/myLoans")
+//    @PostAuthorize("hasRole('ROOT')")
     public List<Loans> getLoanDetails(@RequestBody Customer customer) {
         return loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getId());
     }
